@@ -1,0 +1,24 @@
+version: 0.1
+
+phases:
+  install:
+    commands:
+      - apt-get update -y
+      - pip install --upgrade pip
+  pre_build:
+    commands:
+      - echo "Validating CFN templates"
+      - |
+        # for cfn_template in $(find . -name "*.yaml"); do
+        #   echo "Validating CloudFormation template file $cfn_template"
+        #   aws cloudformation validate-template --template-body file://$cfn_template
+        # done
+  build:
+    commands:
+      - |
+        for dir in $(ls -d code/*/*); do
+          if [ -e $dir/requirements.txt ] ; then
+            echo "Installing requirements"
+            pip install -r $dir/requirements.txt -t $dir
+          fi
+        done
